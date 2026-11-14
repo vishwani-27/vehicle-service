@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Service Booking System | SR University Hackathon 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Quick Demo Switcher Bar for Hackathon Evaluation / Presentation -->
+    <div class="demo-bar">
+        <span>⚡ Hackathon Quick Demo Switcher:</span>
+        <button class="demo-btn" onclick="quickLogin('rahul@gmail.com', 'customer123')">👤 Rahul (Customer)</button>
+        <button class="demo-btn" onclick="quickLogin('speedy@garage.com', 'garage123')">🔧 Speedy Auto Care (Garage)</button>
+        <button class="demo-btn" onclick="quickLogin('admin@vehicleservice.com', 'admin123')">🛡️ System Admin</button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand" onclick="switchTab('home-tab'); return false;">
+                <span class="brand-icon">🚗</span>
+                <div>
+                    <span class="brand-title">AutoServe Pro</span>
+                </div>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active" data-tab="home-tab" onclick="switchTab('home-tab'); return false;">Home</a></li>
+                    <li><a href="#" data-tab="centers-tab" onclick="switchTab('centers-tab'); return false;">Service Centers</a></li>
+                    <li><a href="#" data-tab="book-tab" onclick="switchTab('book-tab'); return false;">Book Service</a></li>
+                    <li id="nav-customer"><a href="#" data-tab="customer-tab" onclick="switchTab('customer-tab'); return false;">My Dashboard</a></li>
+                    <li id="nav-garage"><a href="#" data-tab="garage-tab" onclick="switchTab('garage-tab'); return false;">Garage Dashboard</a></li>
+                    <li id="nav-admin"><a href="#" data-tab="admin-tab" onclick="switchTab('admin-tab'); return false;">Admin</a></li>
+                </ul>
+            </nav>
+
+            <div class="user-badge" id="auth-status">
+                <!-- Injected dynamically by JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+
+        <!-- 1. HOME TAB -->
+        <section id="home-tab" class="tab-pane active">
+            <div class="hero-card">
+                <h1>Smart Vehicle Service Booking</h1>
+                <p>Book servicing appointments online at nearby verified garages. Select service types, track real-time job status, and avoid phone call confusion.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-secondary" onclick="switchTab('book-tab')">📅 Book a Service Now</button>
+                    <button class="btn btn-outline" style="background: rgba(255,255,255,0.2); color: white; border-color: white;" onclick="switchTab('centers-tab')">🔍 Explore Service Centers</button>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span>Featured Service Centers</span>
+                <button class="btn btn-outline btn-sm" onclick="switchTab('centers-tab')">View All &rarr;</button>
+            </div>
+            <div class="grid-3" id="home-centers-preview">
+                <!-- Dynamically populated or mirrored -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Speedy Auto Care</div>
+                            <small style="color: #64748b;">Plot 12, Main Road, Hanamkonda</small>
+                        </div>
+                        <span class="price-tag">From ₹300</span>
+                    </div>
+                    <div class="service-chip-list">
+                        <span class="service-chip">Oil Change (₹600)</span>
+                        <span class="service-chip">Full Service (₹1500)</span>
+                        <span class="service-chip">Washing (₹300)</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startBookingForCenter(1)">Book at Speedy Auto</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Apex Motors Workshop</div>
+                            <small style="color: #64748b;">Near Railway Station, Kazipet</small>
+                        </div>
+                        <span class="price-tag">From ₹300</span>
+                    </div>
+                    <div class="service-chip-list">
+                        <span class="service-chip">Oil Change (₹650)</span>
+                        <span class="service-chip">Full Service (₹1600)</span>
+                        <span class="service-chip">AC Servicing (₹1200)</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startBookingForCenter(2)">Book at Apex Motors</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">City Bike & Car Care</div>
+                            <small style="color: #64748b;">Opposite Bus Stand, Subedari</small>
+                        </div>
+                        <span class="price-tag">From ₹250</span>
+                    </div>
+                    <div class="service-chip-list">
+                        <span class="service-chip">Washing (₹250)</span>
+                        <span class="service-chip">Oil Change (₹600)</span>
+                        <span class="service-chip">Full Service (₹1400)</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startBookingForCenter(3)">Book at City Care</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SERVICE CENTERS TAB -->
+        <section id="centers-tab" class="tab-pane">
+            <div class="section-title">
+                <span>Verified Service Centers in Warangal</span>
+            </div>
+            <div class="grid-3" id="centers-grid">
+                <!-- Rendered dynamically from MySQL -->
+            </div>
+        </section>
+
+        <!-- 3. STEP-WISE BOOKING TAB -->
+        <section id="book-tab" class="tab-pane">
+            <div class="booking-form-card">
+                <h2 style="color: var(--primary-color); margin-bottom: 0.5rem; text-align: center;">Book a Service Appointment</h2>
+                <p style="text-align: center; color: #64748b; margin-bottom: 1.5rem;">Select your vehicle, service center, preferred service, and schedule.</p>
+
+                <div class="step-indicator">
+                    <div class="step-item active">
+                        <div class="step-number">1</div>
+                        <span class="step-text">Vehicle</span>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-number">2</div>
+                        <span class="step-text">Center</span>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-number">3</div>
+                        <span class="step-text">Service</span>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-number">4</div>
+                        <span class="step-text">Schedule</span>
+                    </div>
+                </div>
+
+                <div id="booking-step-content">
+                    <form onsubmit="submitBookingForm(event)">
+                        <!-- Step 1: Select Vehicle -->
+                        <div class="form-group">
+                            <label class="form-label" for="book-vehicle">1. Choose Your Vehicle *</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <select id="book-vehicle" class="form-control" required>
+                                    <option value="">-- Loading vehicles... --</option>
+                                </select>
+                                <button type="button" class="btn btn-outline" onclick="openModal('add-vehicle-modal')">+ Add</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Choose Service Center -->
+                        <div class="form-group">
+                            <label class="form-label" for="book-center">2. Select Service Center *</label>
+                            <select id="book-center" class="form-control" onchange="onCenterSelected()" required>
+                                <option value="">-- Loading centers... --</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 3: Choose Service Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="book-service">3. Select Service Type *</label>
+                            <select id="book-service" class="form-control" onchange="onServiceSelected()" required>
+                                <option value="">-- Choose Center First --</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 4: Schedule (Date & Time Slot) -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="book-date">4. Preferred Date *</label>
+                                <input type="date" id="book-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="book-slot">5. Time Slot *</label>
+                                <select id="book-slot" class="form-control" required>
+                                    <option value="">-- Choose Center First --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Price Summary -->
+                        <div class="price-summary-box">
+                            <div>
+                                <span style="font-size: 0.85rem; color: #64748b; display: block;">Estimated Service Cost:</span>
+                                <strong id="service-price-val" style="font-size: 1.4rem; color: #0d9488;">₹0</strong>
+                            </div>
+                            <span style="font-size: 0.8rem; color: #64748b;">(Payable at garage upon completion)</span>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <button type="submit" class="btn btn-primary" style="padding: 0.7rem 1.8rem;">
+                                Confirm & Book Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CUSTOMER DASHBOARD TAB -->
+        <section id="customer-tab" class="tab-pane">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2>Welcome, <span id="cust-welcome-name">Customer</span>!</h2>
+                    <p style="color: #64748b;">Manage your registered vehicles and track live service appointments.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('add-vehicle-modal')">+ Register New Vehicle</button>
+            </div>
+
+            <!-- Vehicles Section -->
+            <div class="section-title">My Registered Vehicles</div>
+            <div class="grid-3" id="cust-vehicles-list" style="margin-bottom: 2rem;">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Bookings Section -->
+            <div class="section-title">My Service Bookings & Live Status</div>
+            <div id="cust-bookings-list">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+        <!-- 5. GARAGE DASHBOARD TAB -->
+        <section id="garage-tab" class="tab-pane">
+            <div class="card" id="garage-center-info" style="margin-bottom: 1.5rem;">
+                <!-- Garage Center details -->
+            </div>
+
+            <div class="section-title">
+                <span>Incoming Appointments <span id="garage-booking-count" style="font-size: 0.9rem; color: #64748b;"></span></span>
+                <button class="btn btn-outline btn-sm" onclick="loadGarageDashboard()">🔄 Refresh List</button>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Vehicle</th>
+                            <th>Service</th>
+                            <th>Schedule</th>
+                            <th>Status</th>
+                            <th>Actions / Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="garage-bookings-body">
+                        <!-- Populated dynamically from MySQL -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 6. ADMIN DASHBOARD TAB -->
+        <section id="admin-tab" class="tab-pane">
+            <div class="section-title">System Administration & Monitoring</div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-users">0</div>
+                    <div class="metric-lbl">Total Registered Users</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-bookings">0</div>
+                    <div class="metric-lbl">Total Service Bookings</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-centers">0</div>
+                    <div class="metric-lbl">Partner Service Centers</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-vehicles">0</div>
+                    <div class="metric-lbl">Registered Vehicles</div>
+                </div>
+            </div>
+
+            <div class="section-title">Recent System Activity</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking #</th>
+                            <th>Customer</th>
+                            <th>Service Center</th>
+                            <th>Service Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-recent-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Add Vehicle -->
+    <div class="modal-overlay" id="add-vehicle-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Register New Vehicle</div>
+                <button class="modal-close" onclick="closeModal('add-vehicle-modal')">&times;</button>
+            </div>
+            <form onsubmit="handleAddVehicle(event)">
+                <div class="form-group">
+                    <label class="form-label">Registration Number (e.g. TS 03 AB 1234) *</label>
+                    <input type="text" id="veh-reg" class="form-control" placeholder="TS 03 AB 1234" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vehicle Model (e.g. Hyundai i20 / Yamaha FZ) *</label>
+                    <input type="text" id="veh-model" class="form-control" placeholder="Hyundai i20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vehicle Type *</label>
+                    <select id="veh-type" class="form-control" required>
+                        <option value="car">Car</option>
+                        <option value="bike">Bike / Motorcycle</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Service Date (Optional)</label>
+                    <input type="date" id="veh-last-date" class="form-control">
+                </div>
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('add-vehicle-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Feedback -->
+    <div class="modal-overlay" id="feedback-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Rate & Review Service</div>
+                <button class="modal-close" onclick="closeModal('feedback-modal')">&times;</button>
+            </div>
+            <form onsubmit="submitFeedback(event)">
+                <input type="hidden" id="feedback-booking-id">
+                <p id="feedback-info" style="font-size: 0.9rem; color: #475569; margin-bottom: 1rem;"></p>
+                <div class="form-group">
+                    <label class="form-label">Rating (1 to 5 Stars) *</label>
+                    <select id="feedback-rating" class="form-control" required>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 Stars - Excellent)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 Stars - Good)</option>
+                        <option value="3">⭐⭐⭐ (3 Stars - Average)</option>
+                        <option value="2">⭐⭐ (2 Stars - Below Average)</option>
+                        <option value="1">⭐ (1 Star - Poor)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Feedback / Remarks</label>
+                    <textarea id="feedback-comment" class="form-control" rows="3" placeholder="How was the service? Any remarks on technician quality or speed?"></textarea>
+                </div>
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('feedback-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-secondary">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Login -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Sign In</div>
+                <button class="modal-close" onclick="closeModal('login-modal')">&times;</button>
+            </div>
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="name@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Register -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Create an Account</div>
+                <button class="modal-close" onclick="closeModal('register-modal')">&times;</button>
+            </div>
+            <form onsubmit="handleRegisterSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" id="reg-name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input type="email" id="reg-email" class="form-control" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account Role *</label>
+                    <select id="reg-role" class="form-control" required>
+                        <option value="customer">Customer / Vehicle Owner</option>
+                        <option value="garage">Garage / Service Center Owner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact Number *</label>
+                    <input type="text" id="reg-contact" class="form-control" placeholder="9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location / City *</label>
+                    <input type="text" id="reg-location" class="form-control" placeholder="Warangal, Telangana" required>
+                </div>
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast"></div>
+
+    
+
+    <script src="js/app.js"></script>
+</body>
+</html>
